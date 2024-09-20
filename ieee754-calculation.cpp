@@ -29,20 +29,19 @@ float ieee_754(uint32_t const data)
 {
     float value;
 
-    // Extract components from given data
-    uint32_t sign = (data >> 31) & 1;        // Bit 31 (1) - Positive = 0, Negative = 1
-    uint32_t exponent = (data >> 23) & 0xFF; // Bits 30-23 (8) - Representing the power of 2
-    uint32_t mantissa = data & 0x007FFFFF;   // Bits 22-0 (23) - Representing the fractional value
+    // Extract components from given data, total 32 bits
+    uint32_t sign = (data >> 31) & 1;        // Bit 31 (1)
+    uint32_t exponent = (data >> 23) & 0xFF; // Bits 30-23 (8)
+    uint32_t mantissa = data & 0x007FFFFF;   // Bits 22-0 (23)
 
-    // Apply bias 1/2 x 2^8 -1 = 127
+    // Apply the bias 1/2 x 2^8 -1 = 127
     int32_t actual_exponent = static_cast<int32_t>(exponent) - 127;
 
-    // Construct the value using formula: value = (-1)^sign x (1+mantissa) x 2^(exponent-127)
+    // Construct the value
     uint32_t biased_exponent = actual_exponent + 127;
     uint32_t ieee_bits = (sign << 31) | (biased_exponent << 23) | mantissa;
 
-    // Convert the bit pattern back to a float
-    // * dereferences the pointer, copying the bit patterns into value
+    // * dereferences the pointer, essentially copying the bit pattern into value
     value = *reinterpret_cast<float *>(&ieee_bits);
 
     return value;
