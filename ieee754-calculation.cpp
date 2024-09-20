@@ -29,10 +29,15 @@ float ieee_754(uint32_t const data)
 {
     float value;
 
+    const int width_exponent = 23;
+
     // Extract components from given data, total 32 bits
-    uint32_t sign = (data >> 31) & 1;        // Bit 31 (1)
-    uint32_t exponent = (data >> 23) & 0xFF; // Bits 30-23 (8)
-    uint32_t mantissa = data & 0x007FFFFF;   // Bits 22-0 (23)
+    // Bit 31 (1)
+    uint32_t sign = (data >> width - 1) & 1;
+    // Bits 30-23 (8)
+    uint32_t exponent = (data >> width_exponent) & 0xFF;
+    // Bits 22-0 (23)
+    uint32_t mantissa = data & 0x007FFFFF;
 
     // Apply the bias 1/2 x 2^8 -1 = 127
     int32_t actual_exponent = static_cast<int32_t>(exponent) - 127;
