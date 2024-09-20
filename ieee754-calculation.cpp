@@ -41,6 +41,8 @@ float ieee_754(uint32_t const data)
     uint32_t biased_exponent = actual_exponent + 127;
     uint32_t ieee_bits = (sign << 31) | (biased_exponent << 23) | mantissa;
 
+    // Convert the bit pattern back to a float
+    // * dereferences the pointer, copying the bit patterns into value
     value = *reinterpret_cast<float *>(&ieee_bits);
 
     return value;
