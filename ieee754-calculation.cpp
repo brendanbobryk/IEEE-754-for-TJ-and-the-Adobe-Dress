@@ -30,6 +30,8 @@ float ieee_754(uint32_t const data)
     float value;
 
     const int width_exponent = 23;
+    // Bias 1/2 x 2^8 -1 = 127
+    const int bias_constant = 127;
 
     // Extract components from given data, total 32 bits
     // Bit 31 (1)
@@ -39,12 +41,12 @@ float ieee_754(uint32_t const data)
     // Bits 22-0 (23)
     uint32_t mantissa = data & 0x007FFFFF;
 
-    // Apply the bias 1/2 x 2^8 -1 = 127
-    int32_t actual_exponent = static_cast<int32_t>(exponent) - 127;
+    // Apply the bias
+    int32_t actual_exponent = static_cast<int32_t>(exponent) - bias_constant;
 
     // Construct the value
-    uint32_t biased_exponent = actual_exponent + 127;
-    uint32_t ieee_bits = (sign << 31) | (biased_exponent << 23) | mantissa;
+    uint32_t biased_exponent = actual_exponent + bias_constant;
+    uint32_t ieee_bits = (sign << width - 1) | (biased_exponent << width_exponent) | mantissa;
 
     // * dereferences the pointer, essentially copying the bit pattern into value
     value = *reinterpret_cast<float *>(&ieee_bits);
